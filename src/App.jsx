@@ -8,7 +8,7 @@ import WIP from "./pages/WIP/wip.jsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
-  const [wip] = useState(false);
+  const [wip] = useState(true);
   const routes = (
     <Router>
       <Routes>
