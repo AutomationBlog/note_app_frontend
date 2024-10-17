@@ -1,4 +1,4 @@
-import wip from "../assets/WIP.jpg";
+import wip from "../../assets/WIP.jpg";
 export default function WIP() {
   return (
     <div className="min-h-screen container mx-auto my-10 h-auto w-auto">
