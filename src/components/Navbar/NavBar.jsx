@@ -10,15 +10,10 @@ const NavBar = () => {
     navigate("/login");
   };
 
-  const handleSearch = (e) => {};
+  const handleSearch = () => {};
 
   const onClearSearch = () => {
     setSearchQuery("");
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    navigate(`/search/${searchQuery}`);
   };
 
   return (
