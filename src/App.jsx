@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Home from "./pages/Home/Home.jsx";
 import SignUp from "./pages/SignUp/SignUp.jsx";
 import LogIn from "./pages/Login/LogIn.jsx";
@@ -19,7 +18,6 @@ function App() {
     </Router>
   );
 
-  console.log(import.meta.env.VITE_WIP);
   return import.meta.env.VITE_WIP === "true" ? <WIP /> : <div>{routes}</div>;
 }
 
