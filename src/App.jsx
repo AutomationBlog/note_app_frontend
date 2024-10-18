@@ -8,7 +8,6 @@ import WIP from "./pages/WIP/wip.jsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
-  const [wip] = useState(false);
   const routes = (
     <Router>
       <Routes>
@@ -20,7 +19,8 @@ function App() {
     </Router>
   );
 
-  return wip ? <WIP /> : <div>{routes}</div>;
+  console.log(import.meta.env.VITE_WIP);
+  return import.meta.env.VITE_WIP === "true" ? <WIP /> : <div>{routes}</div>;
 }
 
 export default App;
