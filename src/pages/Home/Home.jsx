@@ -1,11 +1,9 @@
 import NavBar from "../../components/Navbar/NavBar";
 
-const Home = () => {
+export default function Home() {
   return (
     <>
       <NavBar />
     </>
   );
-};
-
-export default Home;
+}
