@@ -64,7 +64,7 @@ const AddEditNote = ({ noteData, type, onClose }) => {
           placeholder="Content"
           rows={10}
           onChange={({ target }) => setContent(target.value)}
-          value={content}
+          value={noteData}
         />
       </div>
       <div>
@@ -87,5 +87,5 @@ export default AddEditNote;
 AddEditNote.propTypes = {
   onClose: PropTypes.func,
   type: PropTypes.string,
-  noteDate: PropTypes.string,
+  noteData: PropTypes.string,
 };
