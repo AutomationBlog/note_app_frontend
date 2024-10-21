@@ -1,15 +1,17 @@
 import { useState } from "react";
 import PasswordInput from "../../components/Input/PasswordInput";
 import NavBar from "../../components/Navbar/NavBar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper.js";
+import { axiosInstance } from "../../utils/axiosInstance.js";
 
 const LoginIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const hadleLogin = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (!validateEmail(email)) {
       setError("Please enter a valid email");
@@ -21,6 +23,17 @@ const LoginIn = () => {
       return;
     }
     setError("");
+    try {
+      const response = await axiosInstance.post("/api/auth/login", {
+        email,
+        password,
+      });
+      if (response.data && response.data.token)
+        localStorage.setItem("token", response.data.token);
+      setTimeout(() => navigate("/dashboard"), 5000); // Redirect to dashboard after 2 seconds
+    } catch (error) {
+      setError(error.response.data.message || "Error logging in");
+    }
   };
 
   return (
@@ -28,7 +41,7 @@ const LoginIn = () => {
       <NavBar />
       <div className="flex items-center justify-center mt-28">
         <div className="w-96 border rounded bg-white px-7 py-10">
-          <form onSubmit={hadleLogin}>
+          <form onSubmit={handleLogin}>
             <h4 className="text-2xl mb-7">Login</h4>
             <input
               type="email"

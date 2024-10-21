@@ -2,8 +2,10 @@ import { MdAdd } from "react-icons/md";
 import NoteCard from "../../components/Cards/NoteCard";
 import NavBar from "../../components/Navbar/NavBar";
 import AddEditNote from "../Home/AddEditNote";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../../utils/axiosInstance";
 
 const Dashboard = () => {
   const [openAddEditModel, setOpenAddEditModel] = useState({
@@ -11,9 +13,32 @@ const Dashboard = () => {
     type: "add",
     data: null,
   });
+
+  const [userinfo, setUserinfo] = useState({});
+
+  const navigate = useNavigate();
+
+  const getUserinfo = async () => {
+    try {
+      const response = await axiosInstance.get("/api/auth/getuser");
+      if (response.data) {
+        setUserinfo(response.data.user);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        // localStorage.clear();
+        navigate("/login");
+      }
+    }
+  };
+
+  useEffect(() => {
+    getUserinfo();
+  }, []);
+
   return (
     <>
-      <NavBar />
+      <NavBar userinfo={userinfo} />
       <div className="container mx-auto">
         <div className="grid gap-4 mt-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           <NoteCard
