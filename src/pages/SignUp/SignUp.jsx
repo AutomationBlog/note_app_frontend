@@ -38,7 +38,7 @@ const SignUp = () => {
         email,
         password,
       });
-      if (response.data) {
+      if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         navigate("/dashboard");
       }

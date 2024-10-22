@@ -66,6 +66,6 @@ const TagInput = ({ tags, setTags }) => {
 export default TagInput;
 
 TagInput.propTypes = {
-  tags: PropTypes.string,
+  tags: PropTypes.array,
   setTags: PropTypes.func,
 };

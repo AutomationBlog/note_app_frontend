@@ -6,17 +6,71 @@ import { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../utils/axiosInstance";
+import Toast from "../../components/ToastMessage/Toast.jsx";
+import EmptyCard from "../../components/EmptyCard/EmptyCard.jsx";
+import AddNotesImg from "../../assets/AddNotesImg.png";
 
-const Dashboard = () => {
+export default function Dashboard() {
   const [openAddEditModel, setOpenAddEditModel] = useState({
     isShown: false,
     type: "add",
     data: null,
   });
 
+  const [showToastMsg, setShowToastMsg] = useState({
+    isShown: false,
+    message: "",
+    type: "add",
+  });
+
+  const [AllNotes, setAllNotes] = useState([]);
+
   const [userinfo, setUserinfo] = useState({});
 
   const navigate = useNavigate();
+
+  const handleEditNote = (noteDetails) => {
+    setOpenAddEditModel({
+      isShown: true,
+      type: "edit",
+      data: noteDetails,
+    });
+  };
+
+  const showToastMessage = (message, type) => {
+    setShowToastMsg({
+      isShown: true,
+      message: message,
+      type,
+    });
+  };
+
+  const handleCloseToast = () => {
+    setShowToastMsg({
+      isShown: false,
+      message: "",
+    });
+  };
+
+  const handleDeleteNote = async (noteId) => {
+    try {
+      const response = await axiosInstance.delete(
+        "/api/note/delete-note/" + noteId
+      );
+      if (response.data.success) {
+        showToastMessage("Note deleted successfully", "delete");
+        getAllNotes();
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        console.log(error.response.data.message);
+      }
+    }
+  };
 
   const getUserinfo = async () => {
     try {
@@ -26,32 +80,51 @@ const Dashboard = () => {
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        // localStorage.clear();
+        localStorage.clear();
         navigate("/login");
       }
     }
   };
 
+  const getAllNotes = async () => {
+    try {
+      const response = await axiosInstance.get("/api/note/get-notes");
+      if (response.data) {
+        setAllNotes(response.data.notes);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   useEffect(() => {
     getUserinfo();
+    getAllNotes();
   }, []);
 
   return (
     <>
       <NavBar userinfo={userinfo} />
       <div className="container mx-auto">
-        <div className="grid gap-4 mt-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          <NoteCard
-            title={"Note App"}
-            date={"10/10/2022"}
-            content={"Content"}
-            tags={"Tag"}
-            isPinned={true}
-            onEdit={() => {}}
-            onDelete={() => {}}
-            onPinNote={() => {}}
-          />
-        </div>
+        {AllNotes.length > 0 ? (
+          <div className="grid gap-4 mt-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {AllNotes.map((note, index) => (
+              <NoteCard
+                key={note._id}
+                title={note.title}
+                date={note.createdOn}
+                content={note.content}
+                tags={note.tags}
+                isPinned={note.isPinned}
+                onEdit={() => handleEditNote(note)}
+                onDelete={() => handleDeleteNote(note._id)}
+                onPinNote={() => {}}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyCard imgSrc={AddNotesImg} message={"Add your first note"} />
+        )}
       </div>
       <button
         className="w-16 h-16 flex items-center justify-center absolute bottom-10 right-10 rounded-2xl bg-primary hover:bg-blue-600 "
@@ -63,6 +136,7 @@ const Dashboard = () => {
       </button>
       <Modal
         isOpen={openAddEditModel.isShown}
+        ariaHideApp={false}
         onRequestClose={() => {}}
         style={{
           overlay: {
@@ -74,14 +148,20 @@ const Dashboard = () => {
       >
         <AddEditNote
           type={openAddEditModel.type}
-          noteDate={openAddEditModel.data}
+          noteData={openAddEditModel.data}
           onClose={() =>
-            setOpenAddEditModel({ ...openAddEditModel, isShown: false })
+            setOpenAddEditModel({ isShown: false, type: "add", data: null })
           }
+          getAllNotes={getAllNotes}
+          showToastMessage={showToastMessage}
         />
       </Modal>
+      <Toast
+        isShown={showToastMsg.isShown}
+        message={showToastMsg.message}
+        type={showToastMsg.type}
+        onClose={handleCloseToast}
+      />
     </>
   );
-};
-
-export default Dashboard;
+}

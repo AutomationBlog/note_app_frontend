@@ -2,17 +2,71 @@ import { useState } from "react";
 import TagInput from "../../components/Input/TagInput";
 import { MdClose } from "react-icons/md";
 import PropTypes from "prop-types";
+import { axiosInstance } from "../../utils/axiosInstance";
 
-const AddEditNote = ({ noteData, type, onClose }) => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [tags, setTags] = useState([]);
+const AddEditNote = ({
+  noteData,
+  type,
+  onClose,
+  getAllNotes,
+  showToastMessage,
+}) => {
+  const [title, setTitle] = useState(noteData?.title || "");
+  const [content, setContent] = useState(noteData?.content || "");
+  const [tags, setTags] = useState(noteData?.tags || []);
 
   const [error, setError] = useState(null);
 
-  const addNewNote = () => {};
+  const addNewNote = async () => {
+    try {
+      const response = await axiosInstance.post("/api/note/add-note", {
+        title,
+        content,
+        tags,
+      });
+      if (response.data.success) {
+        showToastMessage("Note added successfully", "success");
+        getAllNotes();
+        onClose();
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setError(error.response.data.message);
+      }
+    }
+  };
 
-  const editNote = () => {};
+  const editNote = async () => {
+    const noteId = noteData._id;
+    console.log(noteId);
+    try {
+      const response = await axiosInstance.put(
+        "/api/note/edit-note/" + noteId,
+        {
+          title,
+          content,
+          tags,
+        }
+      );
+      if (response.data.success) {
+        showToastMessage("Note updated successfully", "success");
+        getAllNotes();
+        onClose();
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setError(error.response.data.message);
+      }
+    }
+  };
 
   const handleAddNote = async (e) => {
     e.preventDefault();
@@ -64,7 +118,7 @@ const AddEditNote = ({ noteData, type, onClose }) => {
           placeholder="Content"
           rows={10}
           onChange={({ target }) => setContent(target.value)}
-          value={noteData}
+          value={content}
         />
       </div>
       <div>
@@ -76,7 +130,7 @@ const AddEditNote = ({ noteData, type, onClose }) => {
         className="btn-primary font-medium mt-5 p-3"
         onClick={handleAddNote}
       >
-        ADD
+        {type === "add" ? "ADD" : "UPDATE"}
       </button>
     </div>
   );
@@ -87,5 +141,6 @@ export default AddEditNote;
 AddEditNote.propTypes = {
   onClose: PropTypes.func,
   type: PropTypes.string,
-  noteData: PropTypes.string,
+  noteData: PropTypes.object,
+  getAllNotes: PropTypes.func,
 };

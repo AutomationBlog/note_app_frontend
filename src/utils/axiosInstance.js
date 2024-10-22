@@ -9,12 +9,11 @@ export const axiosInstance = axios.create({
   },
 });
 
-axiosInstance.interceptors.response.use(
+axiosInstance.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("token");
-    console.log(accessToken);
+    let accessToken = localStorage.getItem("token");
     if (accessToken) {
-      config.headers["authorization"] = `Bearer ${accessToken}`;
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   },

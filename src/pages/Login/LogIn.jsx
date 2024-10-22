@@ -30,7 +30,7 @@ const LoginIn = () => {
       });
       if (response.data && response.data.token)
         localStorage.setItem("token", response.data.token);
-      setTimeout(() => navigate("/dashboard"), 5000); // Redirect to dashboard after 2 seconds
+      navigate("/dashboard");
     } catch (error) {
       setError(error.response.data.message || "Error logging in");
     }
