@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 const EmptyCard = ({ imgSrc, message }) => {
   return (
     <div className="flex flex-col items-center justify-center mt-20">
@@ -10,3 +12,8 @@ const EmptyCard = ({ imgSrc, message }) => {
 };
 
 export default EmptyCard;
+
+EmptyCard.propTypes = {
+  imgSrc: PropTypes.string,
+  message: PropTypes.string,
+};

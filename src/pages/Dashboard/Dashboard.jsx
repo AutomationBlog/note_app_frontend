@@ -108,7 +108,7 @@ export default function Dashboard() {
       <div className="container mx-auto">
         {AllNotes.length > 0 ? (
           <div className="grid gap-4 mt-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {AllNotes.map((note, index) => (
+            {AllNotes.map((note) => (
               <NoteCard
                 key={note._id}
                 title={note.title}

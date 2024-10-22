@@ -143,4 +143,5 @@ AddEditNote.propTypes = {
   type: PropTypes.string,
   noteData: PropTypes.object,
   getAllNotes: PropTypes.func,
+  showToastMessage: PropTypes.func,
 };
