@@ -4,7 +4,7 @@ import SearchBar from "../SearchBar/SearchBar";
 import { useState } from "react";
 import PropTypes from "prop-types";
 
-const NavBar = ({ userinfo }) => {
+const NavBar = ({ userinfo, onSearchNote, handleClearSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const onLogout = () => {
@@ -12,10 +12,15 @@ const NavBar = ({ userinfo }) => {
     navigate("/login");
   };
 
-  const handleSearch = () => {};
+  const handleSearch = () => {
+    if (searchQuery) {
+      onSearchNote(searchQuery);
+    }
+  };
 
   const onClearSearch = () => {
     setSearchQuery("");
+    handleClearSearch();
   };
 
   return (
@@ -38,4 +43,6 @@ export default NavBar;
 
 NavBar.propTypes = {
   userinfo: PropTypes.object,
+  onSearchNote: PropTypes.func,
+  handleClearSearch: PropTypes.func,
 };

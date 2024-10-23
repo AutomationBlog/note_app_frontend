@@ -9,6 +9,7 @@ import { axiosInstance } from "../../utils/axiosInstance";
 import Toast from "../../components/ToastMessage/Toast.jsx";
 import EmptyCard from "../../components/EmptyCard/EmptyCard.jsx";
 import AddNotesImg from "../../assets/AddNotesImg.png";
+import NoDataImg from "../../assets/noData.png";
 
 export default function Dashboard() {
   const [openAddEditModel, setOpenAddEditModel] = useState({
@@ -26,6 +27,8 @@ export default function Dashboard() {
   const [AllNotes, setAllNotes] = useState([]);
 
   const [userinfo, setUserinfo] = useState({});
+
+  const [isSearch, seIsSearch] = useState(false);
 
   const navigate = useNavigate();
 
@@ -72,6 +75,25 @@ export default function Dashboard() {
     }
   };
 
+  const onSearchNote = (query) => {
+    try {
+      const response = axiosInstance.post("/api/note/search-notes", {
+        params: { query },
+      });
+      if (response.data.success) {
+        seIsSearch(true);
+        setAllNotes(response.data.notes);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleClearSearch = () => {
+    seIsSearch(false);
+    setAllNotes([]);
+  };
+
   const getUserinfo = async () => {
     try {
       const response = await axiosInstance.get("/api/auth/getuser");
@@ -83,6 +105,18 @@ export default function Dashboard() {
         localStorage.clear();
         navigate("/login");
       }
+    }
+  };
+
+  const updatedIsPinned = async (noteId) => {
+    try {
+      const response = await axiosInstance.put("/api/note/pin-note/" + noteId);
+      if (response.data.success) {
+        showToastMessage("Note updated successfully", "success");
+        getAllNotes();
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -104,7 +138,11 @@ export default function Dashboard() {
 
   return (
     <>
-      <NavBar userinfo={userinfo} />
+      <NavBar
+        userinfo={userinfo}
+        onSearchNote={onSearchNote}
+        handleClearSearch={handleClearSearch}
+      />
       <div className="container mx-auto">
         {AllNotes.length > 0 ? (
           <div className="grid gap-4 mt-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -118,12 +156,17 @@ export default function Dashboard() {
                 isPinned={note.isPinned}
                 onEdit={() => handleEditNote(note)}
                 onDelete={() => handleDeleteNote(note._id)}
-                onPinNote={() => {}}
+                onPinNote={() => {
+                  updatedIsPinned(note._id);
+                }}
               />
             ))}
           </div>
         ) : (
-          <EmptyCard imgSrc={AddNotesImg} message={"Add your first note"} />
+          <EmptyCard
+            imgSrc={isSearch ? NoDataImg : AddNotesImg}
+            message={isSearch ? "No notes found" : "Add your first note"}
+          />
         )}
       </div>
       <button
