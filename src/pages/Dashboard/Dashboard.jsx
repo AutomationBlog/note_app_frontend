@@ -1,7 +1,7 @@
 import { MdAdd } from "react-icons/md";
 import NoteCard from "../../components/Cards/NoteCard";
 import NavBar from "../../components/Navbar/NavBar";
-import AddEditNote from "../Home/AddEditNote";
+import AddEditNote from "../AddEditNote/AddEditNote.jsx";
 import { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";

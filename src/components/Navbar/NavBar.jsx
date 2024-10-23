@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ProfileInfo from "../Cards/ProfileInfo";
 import SearchBar from "../SearchBar/SearchBar";
 import { useState } from "react";
 import PropTypes from "prop-types";
+import noteLogo from "../../assets/note_logo.jpg";
 
 const NavBar = ({ userinfo, onSearchNote, handleClearSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,7 +26,13 @@ const NavBar = ({ userinfo, onSearchNote, handleClearSearch }) => {
 
   return (
     <div className="bg-white flex items-center justify-between px-6 py-2 drop-shadow ">
-      <h2 className="text-xl font-medium text-black py-2">Notes</h2>
+      <Link to="/">
+        <div className="flex items-center">
+          <img src={noteLogo} alt="logo" className="w-10 h-10" />
+          <h2 className="text-xl font-medium text-black py-2">Notes</h2>
+        </div>
+      </Link>
+
       {userinfo && (
         <SearchBar
           value={searchQuery}
@@ -34,7 +41,11 @@ const NavBar = ({ userinfo, onSearchNote, handleClearSearch }) => {
           handleSearch={handleSearch}
         />
       )}
-      {userinfo && <ProfileInfo userinfo={userinfo} onLogout={onLogout} />}
+      {userinfo ? (
+        <ProfileInfo userinfo={userinfo} onLogout={onLogout} />
+      ) : (
+        <a href="/login">Login</a>
+      )}
     </div>
   );
 };
