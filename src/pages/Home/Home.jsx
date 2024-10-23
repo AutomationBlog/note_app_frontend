@@ -19,7 +19,7 @@ export default function Home() {
             className="text-2xl font-medium text-center mt-2 text-blue-600 hover:underline cursor-pointer"
             href="/signup"
           >
-            Get Stared
+            Get Started
           </a>
         </div>
       </div>
