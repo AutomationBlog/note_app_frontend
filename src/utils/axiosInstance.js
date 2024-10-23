@@ -2,7 +2,10 @@ import axios from "axios";
 import { API_URL_LOCAL } from "./constants";
 
 export const axiosInstance = axios.create({
-  baseURL: API_URL_LOCAL,
+  baseURL:
+    import.meta.env.VITE_isLOCAL === "true"
+      ? import.meta.env.VITE_LOCAL
+      : import.meta.env.VITE_CLOUD,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
