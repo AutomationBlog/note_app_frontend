@@ -4,11 +4,13 @@ import NavBar from "../../components/Navbar/NavBar";
 import { Link, useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper.js";
 import { axiosInstance } from "../../utils/axiosInstance.js";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner.jsx";
 
 const LoginIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -23,14 +25,17 @@ const LoginIn = () => {
       return;
     }
     setError("");
+    setIsLoading(true);
     try {
       const response = await axiosInstance.post("/api/auth/login", {
         email,
         password,
       });
-      if (response.data && response.data.token)
+      if (response.data && response.data.token) {
+        setIsLoading(false);
         localStorage.setItem("token", response.data.token);
-      navigate("/dashboard");
+        navigate("/dashboard");
+      }
     } catch (error) {
       setError(error.response.data.message || "Error logging in");
     }
@@ -42,7 +47,7 @@ const LoginIn = () => {
       <div className="flex items-center justify-center mt-28">
         <div className="w-96 border rounded bg-white px-7 py-10">
           <form onSubmit={handleLogin}>
-            <h4 className="text-2xl mb-7">Login</h4>
+            <h4 className="text-2xl mb-7 text-center">Login</h4>
             <input
               type="email"
               placeholder="Email"
@@ -56,8 +61,8 @@ const LoginIn = () => {
               placeholder="Password"
             />
             {error && <p className="text-red-500 text-xs pb-1">{error}</p>}
-            <button type="submit" className="btn-primary">
-              Login
+            <button type="submit" className="btn-primary" disabled={isLoading}>
+              {isLoading ? <LoadingSpinner /> : "Login"}
             </button>
             <p className="text-sm text-center mt-4">
               Not register yet?{" "}

@@ -4,20 +4,27 @@ import PasswordInput from "../../components/Input/PasswordInput";
 import { Link, useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper";
 import { axiosInstance } from "../../utils/axiosInstance";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 const SignUp = () => {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    if (!name) {
-      setError("Please enter your name");
+    if (!firstName && !lastName) {
+      setError("Please enter your first name");
+      return;
+    }
+    if (!lastName) {
+      setError("Please enter your last name");
       return;
     }
     if (!validateEmail(email)) {
@@ -30,19 +37,21 @@ const SignUp = () => {
     }
 
     setError(null);
-
+    setIsLoading(true);
     // Perform signup logic here
     try {
       const response = await axiosInstance.post("/api/auth/signup", {
-        name,
+        name: firstName + " " + lastName,
         email,
         password,
       });
       if (response.data.token) {
+        setIsLoading(false);
         localStorage.setItem("token", response.data.token);
         navigate("/dashboard");
       }
-      setName("");
+      firstName("");
+      lastName("");
       setEmail("");
       setPassword("");
     } catch (error) {
@@ -56,13 +65,20 @@ const SignUp = () => {
       <div className="flex items-center justify-center mt-28">
         <div className="w-96 border rounded bg-white px-7 py-10">
           <form onSubmit={handleSignUp}>
-            <h4 className="text-2xl mb-7">SignUp</h4>
+            <h4 className="text-2xl mb-7 text-center">SignUp</h4>
             <input
               type="text"
-              placeholder="Name"
+              placeholder="First Name"
               className="input-box"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              className="input-box"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
             />
             <input
               type="email"
@@ -77,8 +93,8 @@ const SignUp = () => {
               placeholder="Password"
             />
             {error && <p className="text-red-500 text-xs pb-1">{error}</p>}
-            <button type="submit" className="btn-primary">
-              Create Account
+            <button type="submit" className="btn-primary" disabled={isLoading}>
+              {isLoading ? <LoadingSpinner /> : "Create Account"}
             </button>
             <p className="text-sm text-center mt-4">
               Already have an account?{" "}
