@@ -3,7 +3,6 @@ import SignUp from "./pages/SignUp/SignUp.jsx";
 import LogIn from "./pages/Login/LogIn.jsx";
 import Dashboard from "./pages/Dashboard/Dashboard.jsx";
 import WIP from "./pages/WIP/wip.jsx";
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
