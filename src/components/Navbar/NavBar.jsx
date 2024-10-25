@@ -44,7 +44,11 @@ const NavBar = ({ userinfo, onSearchNote, handleClearSearch }) => {
       {userinfo ? (
         <ProfileInfo userinfo={userinfo} onLogout={onLogout} />
       ) : (
-        <a href="/login">Login</a>
+        <Link to="/login">
+          <span className="text-lg font-medium text-black py-2 hover:underline cursor-pointer">
+            Login
+          </span>
+        </Link>
       )}
     </div>
   );
