@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   const [userinfo, setUserinfo] = useState({});
 
-  const [isSearch, seIsSearch] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
 
   const navigate = useNavigate();
 
@@ -75,13 +75,13 @@ export default function Dashboard() {
     }
   };
 
-  const onSearchNote = (query) => {
+  const onSearchNote = async (query) => {
     try {
-      const response = axiosInstance.post("/api/note/search-notes", {
-        params: { query },
+      const response = await axiosInstance.get("/api/note/search-note", {
+        params: { searchText: query },
       });
       if (response.data.success) {
-        seIsSearch(true);
+        setIsSearch(true);
         setAllNotes(response.data.notes);
       }
     } catch (error) {
@@ -90,8 +90,8 @@ export default function Dashboard() {
   };
 
   const handleClearSearch = () => {
-    seIsSearch(false);
-    setAllNotes([]);
+    setIsSearch(false);
+    getAllNotes();
   };
 
   const getUserinfo = async () => {
