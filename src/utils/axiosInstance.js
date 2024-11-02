@@ -1,5 +1,4 @@
 import axios from "axios";
-import { API_URL_LOCAL } from "./constants";
 
 export const axiosInstance = axios.create({
   baseURL:
